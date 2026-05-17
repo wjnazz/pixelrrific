@@ -12,7 +12,8 @@ export const ColorInventory: React.FC<Props> = ({ data, modality }) => {
 
   const getTypeLabel = () => {
     switch (modality) {
-      case 'dmc': return 'Stitches / Drills';
+      case 'diamond': return 'Drills';
+      case 'crossstitch': return 'Stitches';
       case 'perler': return 'Beads';
       case 'lego': return 'Studs';
       default: return 'Units';

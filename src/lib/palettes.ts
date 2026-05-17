@@ -112,7 +112,7 @@ export const LEGO_PALETTE: Palette = {
 
 // Standard DMC Palette for Cross-stitch and Diamond Art (Truncated for typical use, about 50 common colors)
 export const DMC_PALETTE: Palette = {
-  name: "DMC (Diamond / Cross-stitch)",
+  name: "DMC",
   colors: assignSymbols([
     { id: "150", name: "Dusty Rose Ultra Very Dark", rgb: [171, 38, 70], hex: "#AB2646" },
     { id: "152", name: "Shell Pink Medium Light", rgb: [226, 160, 153], hex: "#E2A099" },
@@ -153,7 +153,8 @@ export const DMC_PALETTE: Palette = {
 };
 
 export const PALETTES: Record<string, Palette> = {
-  dmc: DMC_PALETTE,
+  crossstitch: { ...DMC_PALETTE, name: "Cross-stitch (DMC)" },
+  diamond: { ...DMC_PALETTE, name: "Diamond Art (DMC)" },
   perler: PERLER_PALETTE,
   lego: LEGO_PALETTE
 };

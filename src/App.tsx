@@ -11,10 +11,10 @@ import { processImage, type ProcessedResult } from './lib/imageProcessor';
 import { generatePDF } from './lib/pdfGenerator';
 
 const DEFAULT_CONFIG: ProjectConfig = {
-  modality: 'dmc',
+  modality: 'diamond',
   canvasWidthInches: 10,
   canvasHeightInches: 10,
-  unitsPerInch: 10, // Default 10 drills/inch for diamond art, or 14 for cross-stitch
+  unitsPerInch: 10, // Default 10 drills/inch for diamond art
 };
 
 function App() {
@@ -75,7 +75,9 @@ function App() {
   const handleModalityChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const modality = e.target.value as ProjectConfig['modality'];
     let unitsPerInch = config.unitsPerInch;
-    if (modality === 'dmc') unitsPerInch = 14; // Default to 14 ct Aida for DMC
+
+    if (modality === 'diamond') unitsPerInch = 10; // Standard drills are 2.5mm (~10 per inch)
+    else if (modality === 'crossstitch') unitsPerInch = 14; // Default to 14 count Aida
     else if (modality === 'perler') unitsPerInch = 5; // Standard 5mm beads (~5 per inch)
     else if (modality === 'lego') unitsPerInch = 3; // Standard 8mm studs (~3.2 per inch)
 
@@ -136,9 +138,10 @@ function App() {
                 onChange={handleModalityChange}
                 className="p-2 border rounded-md bg-gray-50"
               >
-                <option value="dmc">Diamond Art / Cross-stitch (DMC)</option>
-                <option value="perler">Perler Beads</option>
-                <option value="lego">Lego Art</option>
+                <option value="diamond">Diamond Art (10 drills/inch)</option>
+                <option value="crossstitch">Cross-stitch (14 ct Aida)</option>
+                <option value="perler">Perler Beads (5mm)</option>
+                <option value="lego">Lego Art (8mm studs)</option>
               </select>
             </div>
 
