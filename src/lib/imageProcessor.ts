@@ -45,7 +45,8 @@ export const processImage = async (
   crop: PixelCrop,
   targetWidthPixels: number,
   targetHeightPixels: number,
-  modality: Modality
+  modality: Modality,
+  maxColors: number = 0
 ): Promise<ProcessedResult> => {
   return new Promise((resolve) => {
     // 1. Draw cropped area to a temporary canvas of the exact target pixel size
@@ -78,33 +79,51 @@ export const processImage = async (
     const data = imageData.data;
 
     const palette = PALETTES[modality].colors;
-    const pixels: ProcessedPixel[] = [];
-    const colorInventory: Record<string, { count: number; info: ColorInfo }> = {};
 
-    // 3. Map colors and build inventory
-    for (let y = 0; y < targetHeightPixels; y++) {
-      for (let x = 0; x < targetWidthPixels; x++) {
-        const i = (y * targetWidthPixels + x) * 4;
-        const r = data[i];
-        const g = data[i + 1];
-        const b = data[i + 2];
-        const a = data[i + 3];
+    // Helper to process a single pass
+    const runPass = (activePalette: ColorInfo[]) => {
+      const passPixels: ProcessedPixel[] = [];
+      const passInventory: Record<string, { count: number; info: ColorInfo }> = {};
 
-        // Skip completely transparent pixels (optional, but good for PNGs)
-        // For simplicity we will assume a white background if transparent
-        const finalR = a < 128 ? 255 : r;
-        const finalG = a < 128 ? 255 : g;
-        const finalB = a < 128 ? 255 : b;
+      for (let y = 0; y < targetHeightPixels; y++) {
+        for (let x = 0; x < targetWidthPixels; x++) {
+          const i = (y * targetWidthPixels + x) * 4;
+          const r = data[i];
+          const g = data[i + 1];
+          const b = data[i + 2];
+          const a = data[i + 3];
 
-        const closest = findClosestColor(finalR, finalG, finalB, palette);
+          // Treat transparent as white
+          const finalR = a < 128 ? 255 : r;
+          const finalG = a < 128 ? 255 : g;
+          const finalB = a < 128 ? 255 : b;
 
-        pixels.push({ x, y, color: closest });
+          const closest = findClosestColor(finalR, finalG, finalB, activePalette);
 
-        if (!colorInventory[closest.id]) {
-          colorInventory[closest.id] = { count: 0, info: closest };
+          passPixels.push({ x, y, color: closest });
+
+          if (!passInventory[closest.id]) {
+            passInventory[closest.id] = { count: 0, info: closest };
+          }
+          passInventory[closest.id].count += 1;
         }
-        colorInventory[closest.id].count += 1;
       }
+      return { passPixels, passInventory };
+    };
+
+    let { passPixels: pixels, passInventory: colorInventory } = runPass(palette);
+
+    // If we need to restrict colors and we have more colors than allowed
+    const uniqueColors = Object.values(colorInventory);
+    if (maxColors > 0 && uniqueColors.length > maxColors) {
+      // Sort colors by frequency (descending) and take the top `maxColors`
+      uniqueColors.sort((a, b) => b.count - a.count);
+      const restrictedPalette = uniqueColors.slice(0, maxColors).map(u => u.info);
+
+      // Pass 2: Re-run with the restricted palette
+      const restrictedResult = runPass(restrictedPalette);
+      pixels = restrictedResult.passPixels;
+      colorInventory = restrictedResult.passInventory;
     }
 
     resolve({

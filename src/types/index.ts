@@ -5,4 +5,5 @@ export interface ProjectConfig {
   canvasWidthInches: number;
   canvasHeightInches: number;
   unitsPerInch: number;
+  maxColors: number; // 0 means unlimited
 }

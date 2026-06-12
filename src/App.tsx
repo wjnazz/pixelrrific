@@ -15,6 +15,7 @@ const DEFAULT_CONFIG: ProjectConfig = {
   canvasWidthInches: 10,
   canvasHeightInches: 10,
   unitsPerInch: 10, // Default 10 drills/inch for diamond art
+  maxColors: 0, // 0 = unlimited
 };
 
 function App() {
@@ -168,21 +169,37 @@ function App() {
               </div>
             </div>
 
-            <div className="flex flex-col gap-2">
-              <label className="text-sm font-medium text-gray-700">
-                Density (Pixels per inch)
-              </label>
-              <input
-                type="number"
-                min={1} max={50}
-                value={config.unitsPerInch}
-                onChange={e => setConfig(prev => ({ ...prev, unitsPerInch: Number(e.target.value) || 1 }))}
-                className="p-2 border rounded-md bg-gray-50"
-              />
-              <p className="text-xs text-gray-500">
-                Grid size will be: {config.canvasWidthInches * config.unitsPerInch} x {config.canvasHeightInches * config.unitsPerInch} pixels.
-              </p>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="flex flex-col gap-2">
+                <label className="text-sm font-medium text-gray-700" title="Pixels/Drills/Stitches per inch">
+                  Density
+                </label>
+                <input
+                  type="number"
+                  min={1} max={50}
+                  value={config.unitsPerInch}
+                  onChange={e => setConfig(prev => ({ ...prev, unitsPerInch: Number(e.target.value) || 1 }))}
+                  className="p-2 border rounded-md bg-gray-50"
+                />
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <label className="text-sm font-medium text-gray-700" title="Max distinct colors (0 for unlimited)">
+                  Max Colors
+                </label>
+                <input
+                  type="number"
+                  min={0} max={100}
+                  value={config.maxColors || ''}
+                  placeholder="Unlimited"
+                  onChange={e => setConfig(prev => ({ ...prev, maxColors: Number(e.target.value) || 0 }))}
+                  className="p-2 border rounded-md bg-gray-50"
+                />
+              </div>
             </div>
+            <p className="text-xs text-gray-500 mt-[-10px]">
+              Grid size will be: {config.canvasWidthInches * config.unitsPerInch} x {config.canvasHeightInches * config.unitsPerInch} pixels.
+            </p>
 
             <div className="mt-4 pt-4 border-t flex flex-col gap-4">
               <label className="flex items-center justify-center gap-2 w-full p-3 bg-blue-50 text-blue-700 font-semibold rounded-lg cursor-pointer hover:bg-blue-100 transition-colors border border-blue-200">
