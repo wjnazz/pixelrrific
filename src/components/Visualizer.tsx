@@ -21,7 +21,7 @@ export const Visualizer: React.FC<VisualizerProps> = ({ data }) => {
     if (containerRef.current) {
       const containerWidth = containerRef.current.clientWidth - 40; // padding
       const maxScale = Math.floor(containerWidth / data.gridWidth);
-      setScale(Math.max(5, Math.min(25, maxScale))); // Min 5px per pixel, Max 25px
+      setScale(Math.max(1, Math.min(25, maxScale))); // Min 1px per pixel, Max 25px
     }
   }, [data.gridWidth]);
 
@@ -105,7 +105,7 @@ export const Visualizer: React.FC<VisualizerProps> = ({ data }) => {
           <span>Zoom:</span>
           <input
             type="range"
-            min={5}
+            min={1}
             max={30}
             value={scale}
             onChange={(e) => setScale(Number(e.target.value))}
