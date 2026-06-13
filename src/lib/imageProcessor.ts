@@ -58,7 +58,13 @@ export const processImage = async (
     if (!ctx) throw new Error("Could not get 2d context");
 
     // We use standard drawImage to let the browser scale the cropped region down
-    // The crop parameters are percentages or pixels, react-image-crop provides pixel crop in onComplete
+    // The crop parameters from react-image-crop onComplete are in pixels relative to the rendered image size.
+    // However, if the image has CSS scaling (e.g. object-fit: contain, max-height), image.width might not match
+    // the actual rendered footprint. It's safer to use getBoundingClientRect if needed, but react-image-crop
+    // actually provides crop values relative to the *rendered* width/height.
+
+    // To get the exact scaling factor, we use the natural dimensions vs the dimensions
+    // that react-image-crop used to calculate the crop.
     const scaleX = image.naturalWidth / image.width;
     const scaleY = image.naturalHeight / image.height;
 

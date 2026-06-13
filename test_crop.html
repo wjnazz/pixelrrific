@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+  // Simple logic test script to figure out the scaling bug
+  const image = { width: 400, height: 300, naturalWidth: 800, naturalHeight: 600 };
+  const crop = { x: 50, y: 50, width: 200, height: 100 }; // 50% width, 33% height
+
+  const scaleX = image.naturalWidth / image.width; // 2
+  const scaleY = image.naturalHeight / image.height; // 2
+
+  console.log("Source X:", crop.x * scaleX);
+  console.log("Source Y:", crop.y * scaleY);
+  console.log("Source Width:", crop.width * scaleX);
+  console.log("Source Height:", crop.height * scaleY);
+</script>
+</body>
+</html>

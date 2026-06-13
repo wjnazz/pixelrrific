@@ -237,7 +237,7 @@ function App() {
                       alt="Crop me"
                       src={imgSrc}
                       onLoad={onImageLoad}
-                      className="max-h-[600px] object-contain"
+                      style={{ maxHeight: '600px', width: 'auto', height: 'auto' }}
                     />
                   </ReactCrop>
                 </div>
