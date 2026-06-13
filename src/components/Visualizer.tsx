@@ -122,6 +122,7 @@ export const Visualizer: React.FC<VisualizerProps> = ({ data }) => {
         <canvas
           ref={canvasRef}
           className="shadow-md bg-white block"
+          style={{ width: `${data.gridWidth * scale}px`, height: `${data.gridHeight * scale}px` }}
         />
       </div>
 
