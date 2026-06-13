@@ -120,11 +120,13 @@ export const processImage = async (
     let { passPixels: pixels, passInventory: colorInventory } = runPass(palette);
 
     // If we need to restrict colors and we have more colors than allowed
+    const parsedMaxColors = parseInt(maxColors as any, 10);
     const uniqueColors = Object.values(colorInventory);
-    if (maxColors > 0 && uniqueColors.length > maxColors) {
+
+    if (!isNaN(parsedMaxColors) && parsedMaxColors > 0 && uniqueColors.length > parsedMaxColors) {
       // Sort colors by frequency (descending) and take the top `maxColors`
       uniqueColors.sort((a, b) => b.count - a.count);
-      const restrictedPalette = uniqueColors.slice(0, maxColors).map(u => u.info);
+      const restrictedPalette = uniqueColors.slice(0, parsedMaxColors).map(u => u.info);
 
       // Pass 2: Re-run with the restricted palette
       const restrictedResult = runPass(restrictedPalette);

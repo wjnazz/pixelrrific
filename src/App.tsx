@@ -100,7 +100,8 @@ function App() {
           completedCrop,
           targetWidthPixels,
           targetHeightPixels,
-          config.modality
+          config.modality,
+          config.maxColors
         );
         setProcessedData(result);
       } catch (err) {
